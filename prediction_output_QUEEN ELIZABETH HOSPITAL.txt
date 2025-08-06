@@ -1,0 +1,12 @@
+Hospital: QUEEN ELIZABETH HOSPITAL
+
+--- Stacking Regressor Evaluation ---
+Mean Squared Error: 47.22
+Root Mean Squared Error: 6.87
+R-squared: -0.81
+
+--- Forecast ---
+Last Invoice Date: 2025-07-02
+Predicted time interval (Stacking): 19 days
+Forecasted Next Invoice Date (Stacking): 2025-07-21
+============================================================================= 
