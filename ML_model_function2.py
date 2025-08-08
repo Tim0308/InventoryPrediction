@@ -15,6 +15,9 @@ import numpy as np
 import openpyxl
 import re
 
+# Aggregate output filename for all hospitals
+AGGREGATED_OUTPUT_FILE = "prediction_output_ALL.txt"
+
 
 def top_sales_hospital_prediction_stacking(sales_table):
   hospital_name = sales_table['SoldToCustomerName'].iloc[0]
@@ -153,9 +156,8 @@ def top_sales_hospital_prediction_stacking(sales_table):
       f"Forecasted Next Invoice Date (Stacking): {forecasted_next_invoice_date_stack.strftime('%Y-%m-%d')}"
   ]
 
-  safe_name = re.sub(r'[\\/*?:"<>|]', '_', hospital_name)
-  filename = f"prediction_output_{safe_name}.txt"
-  with open(filename, "w") as f:
+  filename = "prediction_output_ALL.txt"
+  with open(filename, "a", encoding="utf-8") as f:
       for line in output_lines:
           f.write(line + "\n")
       f.write("============================================================================= \n")
