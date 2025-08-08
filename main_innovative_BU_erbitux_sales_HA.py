@@ -124,10 +124,13 @@ for i in range(1, len(HA_hospital_table_list_merged_same_order)):
   print(f"The number of rows in the merged and sorted DataFrame for {HA_hospital_list[i]} is: {HA_hospital_table_list_merged_same_order[i].shape[0]}")
 
 
-
+# print(HA_hospital_table_list_merged_same_order[1])
+print(HA_hospital_table_list_merged_same_order[3].iloc[1:])
 # for hospital_table in HA_hospital_table_list_merged_same_order:
 #   top_sales_hospital_prediction(hospital_table)
 #   top_sales_hospital_prediction(hospital_table.iloc[1:]) # drop the first row as it is always 0 in time intervals
 # print(HA_hospital_table_list_merged_same_order[3].iloc[1:].head(3))
 # top_sales_hospital_prediction(HA_hospital_table_list_merged_same_order[3].iloc[1:])
+
+
 top_sales_hospital_prediction_stacking(HA_hospital_table_list_merged_same_order[3].iloc[1:])
