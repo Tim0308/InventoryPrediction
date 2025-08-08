@@ -13,10 +13,19 @@ import numpy as np
 import openpyxl
 from ML_model_function import top_sales_hospital_prediction
 from ML_model_function2 import top_sales_hospital_prediction_stacking
+import os
 
 
 
 print('hello world')
+
+# Ensure fresh aggregated output per run
+aggregated_output = "prediction_output_ALL.txt"
+if os.path.exists(aggregated_output):
+    try:
+        os.remove(aggregated_output)
+    except OSError:
+        pass
 
 
 # # Load Excel data
@@ -67,7 +76,7 @@ print(f"number of hospital = {len(hospital_list)}")
 
 HA_hospital_list = ['PRINCESS MARGARET HOSP', 'UNITED CHRISTIAN HOSPITAL', 'TSEUNG KWAN O HOSPITAL', 
                     'QUEEN ELIZABETH HOSPITAL', 'PRINCE OF WALES HOSPITAL', 'QUEEN MARY HOSPITAL C/O PHARMACY',
-                    'PAMELA YOUDE NETHERSOLE EASTERN HOSPITAL', 'TUEN MUN HOSPITAL']
+                    'PAMELA YOUDE NETHERSOLE EASTERN HOSPITAL', 'TUEN MUN HOSPITAL', ]
 
 # top_sales_hospital = ['QUEEN ELIZABETH HOSPITAL']
 Innovative_BU_erbitux_sales_2023_to_2025_HA_filtered_top_sales = Innovative_BU_erbitux_sales_2023_to_2025_HA[
@@ -125,12 +134,14 @@ for i in range(1, len(HA_hospital_table_list_merged_same_order)):
 
 
 # print(HA_hospital_table_list_merged_same_order[1])
-print(HA_hospital_table_list_merged_same_order[3].iloc[1:])
-# for hospital_table in HA_hospital_table_list_merged_same_order:
-#   top_sales_hospital_prediction(hospital_table)
-#   top_sales_hospital_prediction(hospital_table.iloc[1:]) # drop the first row as it is always 0 in time intervals
+# print(HA_hospital_table_list_merged_same_order[3].iloc[1:])
+
+for hospital_table in HA_hospital_table_list_merged_same_order:
+  print(hospital_table.iloc[1:])
+  # Use stacking model which appends to prediction_output_ALL.txt
+  top_sales_hospital_prediction_stacking(hospital_table.iloc[1:])
 # print(HA_hospital_table_list_merged_same_order[3].iloc[1:].head(3))
 # top_sales_hospital_prediction(HA_hospital_table_list_merged_same_order[3].iloc[1:])
 
 
-top_sales_hospital_prediction_stacking(HA_hospital_table_list_merged_same_order[3].iloc[1:])
+# top_sales_hospital_prediction_stacking(HA_hospital_table_list_merged_same_order[3].iloc[1:])
