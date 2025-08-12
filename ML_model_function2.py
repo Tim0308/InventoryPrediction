@@ -258,4 +258,5 @@ def top_sales_hospital_prediction_stacking(sales_table, horizon_days):
           f.write(line + "\n")
       f.write("============================================================================= \n")
   
+  
   return results_melted_with_forecast
