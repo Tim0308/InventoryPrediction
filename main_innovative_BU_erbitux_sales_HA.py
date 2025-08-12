@@ -51,6 +51,10 @@ output_path_cleaned = 'Innovative_BU_erbitux_sales_2023_to_2025.xlsx'
 # Innovative_BU_erbitux_sales_2023_to_2025.to_excel(output_path_cleaned, index=True)
 # print(f"Cleaned data saved to: {output_path_cleaned}")
 
+"""
+===============================================================================
+"""
+
 # Replace 'Sheet1' with the name or index of the sheet you want to read
 Innovative_BU_erbitux_sales_2023_to_2025 = pd.read_excel(output_path_cleaned)
 
@@ -127,7 +131,7 @@ for df_hospital in HA_hospital_table_list:
   HA_hospital_table_list_merged_same_order.append(df_merged)
 
 
-print(HA_hospital_table_list_merged_same_order[0])
+# print(HA_hospital_table_list_merged_same_order[0])
 for i in range(1, len(HA_hospital_table_list_merged_same_order)):
 #   print(HA_hospital_table_list_merged_same_order[i])
   print(f"The number of rows in the merged and sorted DataFrame for {HA_hospital_list[i]} is: {HA_hospital_table_list_merged_same_order[i].shape[0]}")
@@ -136,12 +140,10 @@ for i in range(1, len(HA_hospital_table_list_merged_same_order)):
 # print(HA_hospital_table_list_merged_same_order[1])
 # print(HA_hospital_table_list_merged_same_order[3].iloc[1:])
 
-for hospital_table in HA_hospital_table_list_merged_same_order:
+for hospital_table in HA_hospital_table_list_merged_same_order[:2]:
   print(hospital_table.iloc[1:])
-  # Use stacking model which appends to prediction_output_ALL.txt
-  top_sales_hospital_prediction_stacking(hospital_table.iloc[1:])
-# print(HA_hospital_table_list_merged_same_order[3].iloc[1:].head(3))
-# top_sales_hospital_prediction(HA_hospital_table_list_merged_same_order[3].iloc[1:])
+#   Use stacking model which appends to prediction_output_ALL.txt
+  results_melted_with_forecast = top_sales_hospital_prediction_stacking(hospital_table.iloc[1:], 4) # 4 is the horizon days (number of next invoices to predict)
 
-
-# top_sales_hospital_prediction_stacking(HA_hospital_table_list_merged_same_order[3].iloc[1:])
+# print(HA_hospital_table_list_merged_same_order[-1].iloc[1:])
+# top_sales_hospital_prediction_stacking(HA_hospital_table_list_merged_same_order[-1].iloc[1:])

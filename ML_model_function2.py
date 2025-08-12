@@ -14,25 +14,34 @@ from sklearn.model_selection import TimeSeriesSplit
 import numpy as np
 import openpyxl
 import re
+import os
 
 # Aggregate output filename for all hospitals
-AGGREGATED_OUTPUT_FILE = "prediction_output_ALL.txt"
+AGGREGATED_OUTPUT_FILE = "prediction_output_ALL_Erbitux_HA.txt"
 
 
-def top_sales_hospital_prediction_stacking(sales_table):
+def top_sales_hospital_prediction_stacking(sales_table, horizon_days):
   hospital_name = sales_table['SoldToCustomerName'].iloc[0]
   print(f'Processing: {hospital_name}')
-  df_model = sales_table.dropna(subset=['Time After Last Invoices']).copy()
+  # Ensure sorted by date and build features aligned to predict next interval from previous invoice features
+  df_model = sales_table.sort_values(by='InvoiceDate').reset_index(drop=True).copy()
 
-  # Feature Engineering
+  # Feature Engineering on current invoice date
   df_model['DayOfYear'] = df_model['InvoiceDate'].dt.dayofyear
   df_model['Month'] = df_model['InvoiceDate'].dt.month
   df_model['DayOfWeek'] = df_model['InvoiceDate'].dt.dayofweek
 
-  # Prepare features and avoid whitespace in column names
-  X = df_model[['DayOfYear', 'Month', 'DayOfWeek', 'Counting Unit']].copy()
-  X.rename(columns={'Counting Unit': 'Counting_Unit'}, inplace=True)
+  # Prepare features based on current invoice, then shift by 1 to use previous invoice's features
+  features_current = df_model[['DayOfYear', 'Month', 'DayOfWeek', 'Counting Unit']].copy()
+  features_current.rename(columns={'Counting Unit': 'Counting_Unit'}, inplace=True)
+  X = features_current.shift(1)
   y = df_model['Time After Last Invoices']
+
+  # Drop rows that became NaN due to shift and ensure target exists
+  valid_mask = X.notna().all(axis=1) & y.notna()
+  X = X.loc[valid_mask].reset_index(drop=True)
+  y = y.loc[valid_mask].reset_index(drop=True)
+  dates_aligned = df_model.loc[valid_mask, 'InvoiceDate'].reset_index(drop=True)
 
   # Use TimeSeriesSplit for a robust, leakage-free train/test split
   n_samples = len(X)
@@ -110,38 +119,122 @@ def top_sales_hospital_prediction_stacking(sales_table):
   print(f"Root Mean Squared Error: {rmse_stack:.2f}")
   print(f"R-squared: {r2_stack:.2f}")
 
-  # Forecast the next interval using the manual stacking model (use last observed invoice features)
-  last_row_features = X.iloc[-1].values.reshape(1, -1)
-  # Round prediction up to the next whole day
   # Fit base learners on all available data for forecasting
   rf_base.fit(X, y)
   lgbm_base.fit(X, y)
-  base_last = np.column_stack([
-      rf_base.predict(last_row_features),
-      lgbm_base.predict(last_row_features)
-  ])
-  raw_pred = meta_model.predict(base_last)[0]
-  predicted_time_interval_stack = int(np.ceil(raw_pred))
+
+  # Helper to compute features from a date and assumed counting unit
+  def build_features_from_date(input_date, counting_unit_value):
+      return pd.DataFrame({
+          'DayOfYear': [input_date.timetuple().tm_yday],
+          'Month': [input_date.month],
+          'DayOfWeek': [input_date.weekday()],
+          'Counting_Unit': [counting_unit_value]
+      })
+
+  # Iterative multi-step forecast for next 4 invoices, using previous-invoice features
   last_invoice_date = df_model['InvoiceDate'].iloc[-1]
-  forecasted_next_invoice_date_stack = last_invoice_date + pd.to_timedelta(predicted_time_interval_stack, unit='D')
-  
-  print(f"\nPredicted next interval (Stacking): {predicted_time_interval_stack} days")
-  print(f"Forecasted Next Invoice Date (Stacking): {forecasted_next_invoice_date_stack.strftime('%Y-%m-%d')}")
+  assumed_counting_unit = df_model['Counting Unit'].iloc[-1] if 'Counting Unit' in df_model.columns else 0
+  horizon = horizon_days
+  forecast_intervals = []
+  forecast_dates = []
+  current_date = last_invoice_date
+  for _ in range(horizon):
+      feat_prev = build_features_from_date(current_date, assumed_counting_unit)
+      base_last = np.column_stack([
+          rf_base.predict(feat_prev),
+          lgbm_base.predict(feat_prev)
+      ])
+      raw_pred = meta_model.predict(base_last)[0]
+      predicted_time_interval_stack = int(np.ceil(raw_pred))
+
+      # Enforce non-negative, realistic forecast with a robust fallback for small/noisy data
+      positive_intervals_hist = y[y > 0]
+      if predicted_time_interval_stack <= 0 or not np.isfinite(predicted_time_interval_stack):
+          fallback_value = int(np.ceil(positive_intervals_hist.median())) if len(positive_intervals_hist) > 0 else 30
+          predicted_time_interval_stack = max(1, fallback_value)
+      else:
+          # Optional upper cap based on historical distribution
+          if len(positive_intervals_hist) >= 5:
+              cap_days = int(np.ceil(np.percentile(positive_intervals_hist, 95) * 2))
+              cap_days = max(7, min(cap_days, 365))
+              if predicted_time_interval_stack > cap_days:
+                  predicted_time_interval_stack = cap_days
+          else:
+              if predicted_time_interval_stack > 365:
+                  predicted_time_interval_stack = 365
+
+      next_date = current_date + pd.to_timedelta(predicted_time_interval_stack, unit='D')
+      forecast_intervals.append(predicted_time_interval_stack)
+      forecast_dates.append(next_date)
+      current_date = next_date
+
+  # Report first step (backward compatibility) and the 4-step outlook
+  print(f"\nPredicted next interval (Stacking): {forecast_intervals[0]} days")
+  print(f"Forecasted Next Invoice Date (Stacking): {forecast_dates[0].strftime('%Y-%m-%d')}")
+  print("Next 4 forecasted invoice dates:")
+  for idx, (ival, dte) in enumerate(zip(forecast_intervals, forecast_dates), start=1):
+      print(f"  {idx}) +{ival} days -> {dte.strftime('%Y-%m-%d')}")
 
   # --- Prepare data for plotting ---
   results_compare = pd.DataFrame({
       'Actual': y_te_hold,
       'Predicted (Stacking)': y_pred_stack
   })
-  results_compare['Date'] = df_model['InvoiceDate'].iloc[test_indices].values
+  results_compare['Date'] = dates_aligned.iloc[test_indices].values
   results_melted = results_compare.melt(id_vars='Date', var_name='Type', value_name='Time After Last Invoices')
 
   forecast_data = pd.DataFrame({
-      'Date': [forecasted_next_invoice_date_stack],
-      'Time After Last Invoices': [predicted_time_interval_stack],
+      'Date': [forecast_dates[0]],
+      'Time After Last Invoices': [forecast_intervals[0]],
       'Type': ['Forecasted Next Invoice Date (Stacking)']
   })
   results_melted_with_forecast = pd.concat([results_melted, forecast_data], ignore_index=True)
+  
+  # --- Create and save forecast plot (no display) ---
+  try:
+      os.makedirs("result_plot", exist_ok=True)
+      # Ensure chronological order for plotting
+      df_plot = results_melted_with_forecast.sort_values("Date").reset_index(drop=True)
+      fig_forecast = px.line(
+          df_plot,
+          x="Date",
+          y="Time After Last Invoices",
+          color="Type",
+          title=f"Actual vs Predicted Time Between Invoices and Forecasted Next Date (Stacking) for {hospital_name}",
+          labels={"Date": "Invoice Date", "Time After Last Invoices": "Time Between Invoices (Days)"},
+      )
+      fig_forecast.update_traces(mode="lines+markers", selector=dict(type="scatter"))
+
+      safe_hospital = re.sub(r'[\\/*?:"<>|]', '_', hospital_name)
+      png_path = os.path.join("result_plot", f"{safe_hospital}__stacking_forecast.png")
+
+      # Save PNG (requires kaleido). If unavailable, fall back to Matplotlib.
+      try:
+          fig_forecast.write_image(png_path, format="png", scale=2, width=1200, height=600)
+      except Exception:
+          try:
+              # Matplotlib fallback
+              import matplotlib.dates as mdates
+              fig, ax = plt.subplots(figsize=(12, 6))
+              for plot_type, df_sub in df_plot.groupby('Type'):
+                  ax.plot(df_sub['Date'], df_sub['Time After Last Invoices'], marker='o', label=plot_type)
+              ax.set_title(f"Actual vs Predicted Time Between Invoices and Forecasted Next Date (Stacking) for {hospital_name}")
+              ax.set_xlabel("Invoice Date")
+              ax.set_ylabel("Time Between Invoices (Days)")
+              ax.legend()
+              ax.grid(True, alpha=0.3)
+              ax.xaxis.set_major_locator(mdates.AutoDateLocator())
+              ax.xaxis.set_major_formatter(mdates.ConciseDateFormatter(ax.xaxis.get_major_locator()))
+              fig.autofmt_xdate()
+              fig.tight_layout()
+              fig.savefig(png_path, dpi=200)
+              plt.close(fig)
+          except Exception as e2:
+              print(f"Warning: PNG not saved for {hospital_name}. Install kaleido: python -m pip install -U kaleido. Error: {str(e2)[:120]}")
+  except Exception:
+      # Never let plotting failure break forecasting/output
+      pass
 
   # --- Collect all results and write to file at the end ---
   output_lines = [
@@ -152,12 +245,17 @@ def top_sales_hospital_prediction_stacking(sales_table):
       f"R-squared: {r2_stack:.2f}",
       "\n--- Forecast ---",
       f"Last Invoice Date: {last_invoice_date.strftime('%Y-%m-%d')}",
-      f"Predicted time interval (Stacking): {predicted_time_interval_stack} days",
-      f"Forecasted Next Invoice Date (Stacking): {forecasted_next_invoice_date_stack.strftime('%Y-%m-%d')}"
+      f"Predicted time interval (Stacking): {forecast_intervals[0]} days",
+      f"Forecasted Next Invoice Date (Stacking): {forecast_dates[0].strftime('%Y-%m-%d')}",
+      "Next 4 forecasted invoice dates:"
   ]
+  for idx, (ival, dte) in enumerate(zip(forecast_intervals, forecast_dates), start=1):
+      output_lines.append(f"  {idx}) +{ival} days -> {dte.strftime('%Y-%m-%d')}")
 
-  filename = "prediction_output_ALL.txt"
+  filename = AGGREGATED_OUTPUT_FILE
   with open(filename, "a", encoding="utf-8") as f:
       for line in output_lines:
           f.write(line + "\n")
       f.write("============================================================================= \n")
+  
+  return results_melted_with_forecast
