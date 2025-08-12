@@ -184,11 +184,21 @@ def top_sales_hospital_prediction_stacking(sales_table, horizon_days):
   results_compare['Date'] = dates_aligned.iloc[test_indices].values
   results_melted = results_compare.melt(id_vars='Date', var_name='Type', value_name='Time After Last Invoices')
 
-  forecast_data = pd.DataFrame({
-      'Date': [forecast_dates[0]],
-      'Time After Last Invoices': [forecast_intervals[0]],
-      'Type': ['Forecasted Next Invoice Date (Stacking)']
+  # Build forecast rows for T+1..T+horizon
+  forecast_rows = []
+  for idx, (ival, dte) in enumerate(zip(forecast_intervals, forecast_dates), start=1):
+      forecast_rows.append({
+          'Date': dte,
+          'Time After Last Invoices': ival,
+          'Type': f'Forecasted Next Invoice Date T+{idx} (Stacking)'
+      })
+  # Also include backward-compatible T+1 label
+  forecast_rows.append({
+      'Date': forecast_dates[0],
+      'Time After Last Invoices': forecast_intervals[0],
+      'Type': 'Forecasted Next Invoice Date (Stacking)'
   })
+  forecast_data = pd.DataFrame(forecast_rows)
   results_melted_with_forecast = pd.concat([results_melted, forecast_data], ignore_index=True)
   
   # --- Create and save forecast plot (no display) ---
@@ -258,5 +268,6 @@ def top_sales_hospital_prediction_stacking(sales_table, horizon_days):
           f.write(line + "\n")
       f.write("============================================================================= \n")
   
-  
+  # Return the plotting dataframe for external reporting/export
   return results_melted_with_forecast
+  

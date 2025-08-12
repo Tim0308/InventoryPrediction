@@ -13,6 +13,7 @@ import numpy as np
 import openpyxl
 from ML_model_function import top_sales_hospital_prediction
 from ML_model_function2 import top_sales_hospital_prediction_stacking
+from report_export import create_excel_from_prediction_summary
 import os
 
 
@@ -140,10 +141,15 @@ for i in range(1, len(HA_hospital_table_list_merged_same_order)):
 # print(HA_hospital_table_list_merged_same_order[1])
 # print(HA_hospital_table_list_merged_same_order[3].iloc[1:])
 
+prediction_summary_list = []
+
 for hospital_table in HA_hospital_table_list_merged_same_order[:2]:
   print(hospital_table.iloc[1:])
-#   Use stacking model which appends to prediction_output_ALL.txt
-  results_melted_with_forecast = top_sales_hospital_prediction_stacking(hospital_table.iloc[1:], 4) # 4 is the horizon days (number of next invoices to predict)
+  hospital_name = hospital_table['SoldToCustomerName'].iloc[0]
+  results_melted_with_forecast = top_sales_hospital_prediction_stacking(
+      hospital_table.iloc[1:], 4
+  )  # 4 is the horizon days (number of next invoices to predict)
+  prediction_summary_list.append((hospital_name, results_melted_with_forecast))
 
-# print(HA_hospital_table_list_merged_same_order[-1].iloc[1:])
-# top_sales_hospital_prediction_stacking(HA_hospital_table_list_merged_same_order[-1].iloc[1:])
+# Create a single Excel summary with all hospitals
+create_excel_from_prediction_summary(prediction_summary_list, output_path='predictions_summary.xlsx')
