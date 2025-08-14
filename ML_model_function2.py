@@ -2,6 +2,7 @@ import subprocess
 import sys
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 import seaborn as sns
 import sklearn
 import plotly.express as px
@@ -225,7 +226,7 @@ def top_sales_hospital_prediction_stacking(sales_table, horizon_days):
       except Exception:
           try:
               # Matplotlib fallback
-              import matplotlib.dates as mdates
+              
               fig, ax = plt.subplots(figsize=(12, 6))
               for plot_type, df_sub in df_plot.groupby('Type'):
                   ax.plot(df_sub['Date'], df_sub['Time After Last Invoices'], marker='o', label=plot_type)
