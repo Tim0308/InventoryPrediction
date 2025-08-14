@@ -219,6 +219,7 @@ def top_sales_hospital_prediction_stacking(sales_table, horizon_days):
 
       safe_hospital = re.sub(r'[\\/*?:"<>|]', '_', hospital_name)
       png_path = os.path.join("result_plot", f"{safe_hospital}__stacking_forecast.png")
+      svg_path = os.path.join("result_plot", f"{safe_hospital}__stacking_forecast.svg")
 
       # Save PNG (requires kaleido). If unavailable, fall back to Matplotlib.
       try:
@@ -240,6 +241,7 @@ def top_sales_hospital_prediction_stacking(sales_table, horizon_days):
               fig.autofmt_xdate()
               fig.tight_layout()
               fig.savefig(png_path, dpi=200)
+              fig.savefig(svg_path, format='svg')
               plt.close(fig)
           except Exception as e2:
               print(f"Warning: PNG not saved for {hospital_name}. Install kaleido: python -m pip install -U kaleido. Error: {str(e2)[:120]}")
