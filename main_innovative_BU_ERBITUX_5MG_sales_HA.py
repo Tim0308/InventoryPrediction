@@ -153,4 +153,4 @@ def ERBITUX_sales_prediction(filtered_df):
         prediction_summary_list.append((hospital_name, results_melted_with_forecast))
 
     # Create a single Excel summary with all hospitals
-    create_excel_from_prediction_summary(prediction_summary_list, output_path='predictions_summary.xlsx')
+    create_excel_from_prediction_summary(prediction_summary_list, output_path='predictions_ERBITUX_summary.xlsx')
