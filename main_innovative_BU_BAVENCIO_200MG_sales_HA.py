@@ -146,7 +146,10 @@ def BAVENCIO_sales_prediction(filtered_df):
         results_melted_with_forecast = top_sales_hospital_prediction_stacking(
             hospital_table.iloc[1:], 4
         )  # 4 is the horizon days (number of next invoices to predict)
-        prediction_summary_list.append((hospital_name, product_name, results_melted_with_forecast))
+        if results_melted_with_forecast is None:
+            print(f"Skipping summary for {hospital_name} ({product_name}) due to insufficient data.")
+        else:
+            prediction_summary_list.append((hospital_name, product_name, results_melted_with_forecast))
 
     # Create a single Excel summary with all hospitals
     # create_excel_from_prediction_summary(prediction_summary_list, output_path='result_excel/predictions_BAVENCIO_summary.xlsx')

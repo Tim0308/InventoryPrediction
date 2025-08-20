@@ -140,15 +140,22 @@ def TEPMETKO_sales_prediction(filtered_df):
     # print(HA_hospital_table_list_merged_same_order[3].iloc[1:])
 
     prediction_summary_list = []
-
     for hospital_table in HA_hospital_table_list_merged_same_order:
-        print(hospital_table.iloc[1:])
+        df_for_model = hospital_table.iloc[1:]
+        print(df_for_model)
+        if hospital_table is None or hospital_table.empty or df_for_model.empty:
+            print("skipped")
+            continue
         hospital_name = hospital_table['SoldToCustomerName'].iloc[0]
         product_name = hospital_table['Brand Detail'].iloc[0]
         results_melted_with_forecast = top_sales_hospital_prediction_stacking(
-            hospital_table.iloc[1:], 4
+            df_for_model, 4
         )  # 4 is the horizon days (number of next invoices to predict)
-        prediction_summary_list.append((hospital_name, product_name, results_melted_with_forecast))
+        if results_melted_with_forecast is None or results_melted_with_forecast.empty:
+            print(f"Skipping summary for {hospital_name} ({product_name}) due to insufficient data.")
+        else:
+            prediction_summary_list.append((hospital_name, product_name, results_melted_with_forecast))
+        print("========================= Done =============================")
 
     # Create a single Excel summary with all hospitals
     # create_excel_from_prediction_summary(prediction_summary_list, output_path='result_excel/predictions_TEPMETKO_summary.xlsx')
