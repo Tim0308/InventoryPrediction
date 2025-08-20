@@ -144,7 +144,7 @@ def ERBITUX_sales_prediction(filtered_df):
 
     prediction_summary_list = []
 
-    for hospital_table in HA_hospital_table_list_merged_same_order[:2]:
+    for hospital_table in HA_hospital_table_list_merged_same_order:
         print(hospital_table.iloc[1:])
         hospital_name = hospital_table['SoldToCustomerName'].iloc[0]
         results_melted_with_forecast = top_sales_hospital_prediction_stacking(
@@ -153,4 +153,4 @@ def ERBITUX_sales_prediction(filtered_df):
         prediction_summary_list.append((hospital_name, results_melted_with_forecast))
 
     # Create a single Excel summary with all hospitals
-    create_excel_from_prediction_summary(prediction_summary_list, output_path='predictions_ERBITUX_summary.xlsx')
+    create_excel_from_prediction_summary(prediction_summary_list, output_path='result_excel/predictions_ERBITUX_summary.xlsx')
