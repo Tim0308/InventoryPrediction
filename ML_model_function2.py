@@ -22,6 +22,7 @@ AGGREGATED_OUTPUT_FILE = "prediction_output_ALL_Erbitux_HA.txt"
 
 
 def top_sales_hospital_prediction_stacking(sales_table, horizon_days):
+  brand_detail = sales_table['Brand Detail'].iloc[0]
   hospital_name = sales_table['SoldToCustomerName'].iloc[0]
   print(f'Processing: {hospital_name}')
   # Ensure sorted by date and build features aligned to predict next interval from previous invoice features
@@ -251,6 +252,7 @@ def top_sales_hospital_prediction_stacking(sales_table, horizon_days):
 
   # --- Collect all results and write to file at the end ---
   output_lines = [
+      f"Brand Detail: {brand_detail}",
       f"Hospital: {hospital_name}",
       "\n--- Stacking Regressor Evaluation ---",
       f"Mean Squared Error: {mse_stack:.2f}",

@@ -16,6 +16,9 @@ from ML_model_function2 import top_sales_hospital_prediction_stacking
 from report_export import create_excel_from_prediction_summary
 import os
 from main_innovative_BU_ERBITUX_5MG_sales_HA import ERBITUX_sales_prediction
+from main_innovative_BU_MAVENCLAD_10MG_sales_HA import MAVENCLAD_sales_prediction
+from main_innovative_BU_BAVENCIO_200MG_sales_HA import BAVENCIO_sales_prediction
+import time
 
 print('hello world')
 excel_file_path = 'SalesM2_records_copy.xlsx'
@@ -47,3 +50,9 @@ if os.path.exists(predictions_file):
 
 #  ["ERBITUX 5MG/ML INJ 20ML 1'S", 'BAVENCIO 200MG (20MG/ML) (1) - HKG', 'TEPMETKO TAB 225 MG - (60) HKG', "REBIF MULTIDOSE SYR 66MCG 4'S+13 NEEDLES", "MAVENCLAD TABS 10MG 1'S"]
 ERBITUX_sales_prediction(SalesM2_2023_to_2025_cleaned_Innovative_BU)
+print("================================== DONE =========================================")
+# time.sleep(5)
+# MAVENCLAD_sales_prediction(SalesM2_2023_to_2025_cleaned_Innovative_BU)
+# print("================================== DONE =========================================")
+time.sleep(5)
+BAVENCIO_sales_prediction(SalesM2_2023_to_2025_cleaned_Innovative_BU)

@@ -18,7 +18,6 @@ import os
 
 
 
-print('hello world')
 
 # Ensure fresh aggregated output per run
 aggregated_output = "prediction_output_ALL.txt"
@@ -40,24 +39,27 @@ if os.path.exists(aggregated_output):
 # df = pd.read_excel(excel_file_path, sheet_name=sheet_name)
 # # Filter for years >= 2023 and select relevant columns
 # filtered_df = df[df['Year'] >= 2023][columns_to_keep]
-# # Filter for Innovative Medicine BU and BAVENCIO brand
+# # Filter for Innovative Medicine BU and ERBITUX brand
 # Innovative_BU_BAVENCIO_sales_2023_to_2025 = filtered_df[
 #     (filtered_df['Original BU'] == 'Innovative Medicine') &
-#     (filtered_df['Brand Detail'] == 'BAVENCIO 5MG/ML INJ 20ML 1\'S')
+#     (filtered_df['Brand Detail'] == 'BAVENCIO 200MG (20MG/ML) (1) - HKG')
 # ]
 
 # print(Innovative_BU_BAVENCIO_sales_2023_to_2025)
 
-output_path_cleaned = 'Innovative_BU_BAVENCIO_sales_2023_to_2025.xlsx'
+# output_path_cleaned = 'Innovative_BU_BAVENCIO_sales_2023_to_2025.xlsx'
 # Innovative_BU_BAVENCIO_sales_2023_to_2025.to_excel(output_path_cleaned, index=True)
 # print(f"Cleaned data saved to: {output_path_cleaned}")
 
 """
 ===============================================================================
 """
-def BAVENCIO_sales_prediction():
+def BAVENCIO_sales_prediction(filtered_df):
     # Replace 'Sheet1' with the name or index of the sheet you want to read
-    Innovative_BU_BAVENCIO_sales_2023_to_2025 = pd.read_excel(output_path_cleaned)
+    # Innovative_BU_BAVENCIO_sales_2023_to_2025 = pd.read_excel(output_path_cleaned)
+    Innovative_BU_BAVENCIO_sales_2023_to_2025 = filtered_df[
+        (filtered_df['Brand Detail'] == 'BAVENCIO 200MG (20MG/ML) (1) - HKG')
+    ]
 
     Innovative_BU_BAVENCIO_sales_2023_to_2025 = Innovative_BU_BAVENCIO_sales_2023_to_2025[(Innovative_BU_BAVENCIO_sales_2023_to_2025['AmountInHKD'] > 0)]
 
@@ -79,15 +81,12 @@ def BAVENCIO_sales_prediction():
 
 
 
-    HA_hospital_list = ['PRINCESS MARGARET HOSP', 'UNITED CHRISTIAN HOSPITAL', 'TSEUNG KWAN O HOSPITAL', 
-                        'QUEEN ELIZABETH HOSPITAL', 'PRINCE OF WALES HOSPITAL', 'QUEEN MARY HOSPITAL C/O PHARMACY',
-                        'PAMELA YOUDE NETHERSOLE EASTERN HOSPITAL', 'TUEN MUN HOSPITAL', ]
-
+    HA_hospital_list = Innovative_BU_BAVENCIO_sales_2023_to_2025_HA['SoldToCustomerName'].unique().tolist()
     # top_sales_hospital = ['QUEEN ELIZABETH HOSPITAL']
     Innovative_BU_BAVENCIO_sales_2023_to_2025_HA_filtered_top_sales = Innovative_BU_BAVENCIO_sales_2023_to_2025_HA[
         (Innovative_BU_BAVENCIO_sales_2023_to_2025_HA['SoldToCustomerName'].isin(HA_hospital_list)) &
         # (Innovative_BU_BAVENCIO_sales_2023_to_2025_HA['ShipToCode From ImportData'] == '70145698') &
-        (Innovative_BU_BAVENCIO_sales_2023_to_2025_HA['Brand Detail'] == 'BAVENCIO 5MG/ML INJ 20ML 1\'S')
+        (Innovative_BU_BAVENCIO_sales_2023_to_2025_HA['Brand Detail'] == 'BAVENCIO 200MG (20MG/ML) (1) - HKG')
     ]
 
 
@@ -102,14 +101,12 @@ def BAVENCIO_sales_prediction():
 
     HA_hospital_table_list = []
     # Filter the DataFrame based on 'Brand Detail' being in the list and 'AmountInHKD' being greater than 0
-    HA_hospital_list = ['PRINCESS MARGARET HOSP', 'UNITED CHRISTIAN HOSPITAL', 'TSEUNG KWAN O HOSPITAL', 
-                        'QUEEN ELIZABETH HOSPITAL', 'PRINCE OF WALES HOSPITAL', 'QUEEN MARY HOSPITAL C/O PHARMACY',
-                        'PAMELA YOUDE NETHERSOLE EASTERN HOSPITAL', 'TUEN MUN HOSPITAL']
+    HA_hospital_list = Innovative_BU_BAVENCIO_sales_2023_to_2025_HA['SoldToCustomerName'].unique().tolist()
 
     for HA_hospital in HA_hospital_list:
         df_hospital = Innovative_BU_BAVENCIO_sales_2023_to_2025_HA_filtered_top_sales[
             (Innovative_BU_BAVENCIO_sales_2023_to_2025_HA_filtered_top_sales['SoldToCustomerName'] == HA_hospital) &
-            (Innovative_BU_BAVENCIO_sales_2023_to_2025_HA_filtered_top_sales['Brand Detail'] == 'BAVENCIO 5MG/ML INJ 20ML 1\'S')
+            (Innovative_BU_BAVENCIO_sales_2023_to_2025_HA_filtered_top_sales['Brand Detail'] == 'BAVENCIO 200MG (20MG/ML) (1) - HKG')
         ].copy()
         # Sort and reset index for correct diff calculation
         df_hospital = df_hospital.sort_values(by='InvoiceDate').reset_index(drop=True)

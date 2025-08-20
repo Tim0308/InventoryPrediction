@@ -17,9 +17,6 @@ from report_export import create_excel_from_prediction_summary
 import os
 
 
-
-print('hello world')
-
 # Ensure fresh aggregated output per run
 aggregated_output = "prediction_output_ALL.txt"
 if os.path.exists(aggregated_output):
@@ -55,10 +52,12 @@ output_path_cleaned = 'Innovative_BU_MAVENCLAD_sales_2023_to_2025.xlsx'
 """
 ===============================================================================
 """
-def MAVENCLAD_sales_prediction():
+def MAVENCLAD_sales_prediction(filtered_df):
     # Replace 'Sheet1' with the name or index of the sheet you want to read
-    Innovative_BU_MAVENCLAD_sales_2023_to_2025 = pd.read_excel(output_path_cleaned)
-
+    # Innovative_BU_MAVENCLAD_sales_2023_to_2025 = pd.read_excel(output_path_cleaned)
+    Innovative_BU_MAVENCLAD_sales_2023_to_2025 = filtered_df[
+        (filtered_df['Brand Detail'] == 'MAVENCLAD TABS 10MG 1\'S')
+    ]
     Innovative_BU_MAVENCLAD_sales_2023_to_2025 = Innovative_BU_MAVENCLAD_sales_2023_to_2025[(Innovative_BU_MAVENCLAD_sales_2023_to_2025['AmountInHKD'] > 0)]
 
 
@@ -79,15 +78,13 @@ def MAVENCLAD_sales_prediction():
 
 
 
-    HA_hospital_list = ['PRINCESS MARGARET HOSP', 'UNITED CHRISTIAN HOSPITAL', 'TSEUNG KWAN O HOSPITAL', 
-                        'QUEEN ELIZABETH HOSPITAL', 'PRINCE OF WALES HOSPITAL', 'QUEEN MARY HOSPITAL C/O PHARMACY',
-                        'PAMELA YOUDE NETHERSOLE EASTERN HOSPITAL', 'TUEN MUN HOSPITAL', ]
+    HA_hospital_list = Innovative_BU_MAVENCLAD_sales_2023_to_2025_HA['SoldToCustomerName'].unique().tolist()
 
     # top_sales_hospital = ['QUEEN ELIZABETH HOSPITAL']
     Innovative_BU_MAVENCLAD_sales_2023_to_2025_HA_filtered_top_sales = Innovative_BU_MAVENCLAD_sales_2023_to_2025_HA[
         (Innovative_BU_MAVENCLAD_sales_2023_to_2025_HA['SoldToCustomerName'].isin(HA_hospital_list)) &
         # (Innovative_BU_MAVENCLAD_sales_2023_to_2025_HA['ShipToCode From ImportData'] == '70145698') &
-        (Innovative_BU_MAVENCLAD_sales_2023_to_2025_HA['Brand Detail'] == 'MAVENCLAD 5MG/ML INJ 20ML 1\'S')
+        (Innovative_BU_MAVENCLAD_sales_2023_to_2025_HA['Brand Detail'] == 'MAVENCLAD TABS 10MG 1\'S')
     ]
 
 
@@ -102,9 +99,9 @@ def MAVENCLAD_sales_prediction():
 
     HA_hospital_table_list = []
     # Filter the DataFrame based on 'Brand Detail' being in the list and 'AmountInHKD' being greater than 0
-    HA_hospital_list = ['PRINCESS MARGARET HOSP', 'UNITED CHRISTIAN HOSPITAL', 'TSEUNG KWAN O HOSPITAL', 
-                        'QUEEN ELIZABETH HOSPITAL', 'PRINCE OF WALES HOSPITAL', 'QUEEN MARY HOSPITAL C/O PHARMACY',
-                        'PAMELA YOUDE NETHERSOLE EASTERN HOSPITAL', 'TUEN MUN HOSPITAL']
+    # HA_hospital_list = Innovative_BU_MAVENCLAD_sales_2023_to_2025_HA_filtered_top_sales['SoldToCustomerName'].unique().tolist()
+
+
 
     for HA_hospital in HA_hospital_list:
         df_hospital = Innovative_BU_MAVENCLAD_sales_2023_to_2025_HA_filtered_top_sales[
