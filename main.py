@@ -22,6 +22,16 @@ from main_innovative_BU_TEPMETKO_TAB_225MG_sales_HA import TEPMETKO_sales_predic
 import time
 
 print('hello world')
+
+"""Reset email display file on each run"""
+email_file = 'Email_display.txt'
+if os.path.exists(email_file):
+    open(email_file, 'w', encoding='utf-8').close()
+
+
+
+
+
 excel_file_path = 'SalesM2_records_copy.xlsx'
 columns_to_keep = [
     'Year', 'Quarter', 'Month', 'Original BU', 'SoldToCustomerName', 'Brand Detail', 'Std Counting Unit',
