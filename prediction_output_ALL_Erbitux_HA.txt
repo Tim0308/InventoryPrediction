@@ -340,3 +340,39 @@ Next 4 forecasted invoice dates:
   3) +11 days -> 2025-08-12
   4) +11 days -> 2025-08-23
 ============================================================================= 
+Brand Detail: ERBITUX 5MG/ML INJ 20ML 1'S
+Hospital: PRINCESS MARGARET HOSP
+
+--- Stacking Regressor Evaluation ---
+Mean Squared Error: 90.19
+Root Mean Squared Error: 9.50
+R-squared: -1.37
+
+--- Forecast ---
+Last Invoice Date: 2025-07-10
+Predicted time interval (Stacking): 63 days
+Forecasted Next Invoice Date (Stacking): 2025-09-11
+Next 4 forecasted invoice dates:
+  1) +63 days -> 2025-09-11
+  2) +66 days -> 2025-11-16
+  3) +32 days -> 2025-12-18
+  4) +34 days -> 2026-01-21
+============================================================================= 
+Brand Detail: ERBITUX 5MG/ML INJ 20ML 1'S
+Hospital: UNITED CHRISTIAN HOSPITAL
+
+--- Stacking Regressor Evaluation ---
+Mean Squared Error: 32.04
+Root Mean Squared Error: 5.66
+R-squared: -0.11
+
+--- Forecast ---
+Last Invoice Date: 2025-07-10
+Predicted time interval (Stacking): 11 days
+Forecasted Next Invoice Date (Stacking): 2025-07-21
+Next 4 forecasted invoice dates:
+  1) +11 days -> 2025-07-21
+  2) +11 days -> 2025-08-01
+  3) +11 days -> 2025-08-12
+  4) +11 days -> 2025-08-23
+============================================================================= 
