@@ -50,7 +50,7 @@ def top_sales_hospital_prediction_stacking(sales_table, horizon_days):
     # Use TimeSeriesSplit for a robust, leakage-free train/test split
     n_samples = len(X)
     # Skip very small datasets; not enough signal for meaningful prediction
-    MIN_SAMPLES = 6
+    MIN_SAMPLES = 5
     if n_samples < MIN_SAMPLES:
         print(f"Skipping {hospital_name}: not enough samples after preprocessing (n={n_samples} < {MIN_SAMPLES}).")
         return None

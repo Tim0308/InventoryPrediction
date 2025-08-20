@@ -79,6 +79,8 @@ def create_excel_from_prediction_summary(
     with pd.ExcelWriter(output_path, engine='openpyxl') as writer:
         summary_df.to_excel(writer, sheet_name='Summary', index=False)
         # Per-hospital sheets (trim to reasonable length if very large)
+        # Track used sheet names to ensure uniqueness
+        used_sheet_names = set()
         for hospital_name, product_name, df in hospital_dfs:
             if df is None or df.empty:
                 continue
@@ -90,10 +92,22 @@ def create_excel_from_prediction_summary(
             })
             # Sort and write
             df_export = df_export.sort_values('InvoiceDate')
+            # Sanitize sheet name: remove invalid characters and trim to 31 chars
             safe_sheet = hospital_name
-            # Excel sheet name limit 31 chars; ensure uniqueness by truncation
-            if len(safe_sheet) > 31:
-                safe_sheet = safe_sheet[:31]
+            # Remove invalid characters: : \ / ? * [ ]
+            for ch in [":", "\\", "/", "?", "*", "[", "]"]:
+                safe_sheet = safe_sheet.replace(ch, "_")
+            if len(safe_sheet) == 0:
+                safe_sheet = "Sheet"
+            safe_sheet = safe_sheet[:31]
+            # Ensure uniqueness by appending a counter if needed
+            base_name = safe_sheet
+            counter = 1
+            while safe_sheet in used_sheet_names:
+                suffix = f"_{counter}"
+                safe_sheet = (base_name[: 31 - len(suffix)]) + suffix
+                counter += 1
+            used_sheet_names.add(safe_sheet)
             df_export.to_excel(writer, sheet_name=safe_sheet, index=False)
 
         # Highlight ForecastedDate_T+1 column in Summary sheet (yellow fill)

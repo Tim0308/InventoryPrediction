@@ -50,19 +50,20 @@ if os.path.exists(predictions_file):
         print(f"Warning: Could not remove {predictions_file}. Please close Excel and try again.")
 
 #  ["ERBITUX 5MG/ML INJ 20ML 1'S", 'BAVENCIO 200MG (20MG/ML) (1) - HKG', 'TEPMETKO TAB 225 MG - (60) HKG', "REBIF MULTIDOSE SYR 66MCG 4'S+13 NEEDLES", "MAVENCLAD TABS 10MG 1'S"]
-# ERBITUX_prediction_summary_list = ERBITUX_sales_prediction(SalesM2_2023_to_2025_cleaned_Innovative_BU)
-# print("================================== DONE =========================================")
-# # time.sleep(5)
-# # MAVENCLAD_sales_prediction(SalesM2_2023_to_2025_cleaned_Innovative_BU)
-# # print("================================== DONE =========================================")
+ERBITUX_prediction_summary_list = ERBITUX_sales_prediction(SalesM2_2023_to_2025_cleaned_Innovative_BU)
+print("================================== DONE =========================================")
 # time.sleep(5)
-# BAVENCIO_prediction_summary_list = BAVENCIO_sales_prediction(SalesM2_2023_to_2025_cleaned_Innovative_BU)
+# MAVENCLAD_sales_prediction(SalesM2_2023_to_2025_cleaned_Innovative_BU)
 # print("================================== DONE =========================================")
-# time.sleep(5)
+time.sleep(5)
+BAVENCIO_prediction_summary_list = BAVENCIO_sales_prediction(SalesM2_2023_to_2025_cleaned_Innovative_BU)
+print("================================== DONE =========================================")
+time.sleep(5)
 
 TEPMETKO_prediction_summary_list = TEPMETKO_sales_prediction(SalesM2_2023_to_2025_cleaned_Innovative_BU)
 print("================================== DONE =========================================")
 time.sleep(5)
 
-Final_prediction_summary_list = TEPMETKO_prediction_summary_list
-create_excel_from_prediction_summary(Final_prediction_summary_list, output_path='result_excel/predictions_summary.xlsx')
+Final_prediction_summary_list = ERBITUX_prediction_summary_list + BAVENCIO_prediction_summary_list + TEPMETKO_prediction_summary_list
+output_path = os.path.join('result_excel', 'predictions_summary.xlsx')
+create_excel_from_prediction_summary(Final_prediction_summary_list, output_path=output_path) 
