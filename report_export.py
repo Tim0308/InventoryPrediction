@@ -21,7 +21,7 @@ def create_excel_from_prediction_summary(
 
     # Build summary rows
     summary_rows = []
-    for hospital_name, df in hospital_dfs:
+    for hospital_name, product_name, df in hospital_dfs:
         if df is None or df.empty:
             continue
         df = df.copy()
@@ -59,6 +59,7 @@ def create_excel_from_prediction_summary(
             return int(x) if pd.notna(pd.Series([x])[0]) else None
 
         summary_rows.append({
+            'Product': product_name,
             'Hospital': hospital_name,
             'LastInvoiceDate': fmt_date(last_actual_date),
             # 'PredictedIntervalDays_T+1': fmt_int(f_intervals[1]),
@@ -78,7 +79,7 @@ def create_excel_from_prediction_summary(
     with pd.ExcelWriter(output_path, engine='openpyxl') as writer:
         summary_df.to_excel(writer, sheet_name='Summary', index=False)
         # Per-hospital sheets (trim to reasonable length if very large)
-        for hospital_name, df in hospital_dfs:
+        for hospital_name, product_name, df in hospital_dfs:
             if df is None or df.empty:
                 continue
             df_export = df.copy()

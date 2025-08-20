@@ -18,6 +18,7 @@ import os
 from main_innovative_BU_ERBITUX_5MG_sales_HA import ERBITUX_sales_prediction
 from main_innovative_BU_MAVENCLAD_10MG_sales_HA import MAVENCLAD_sales_prediction
 from main_innovative_BU_BAVENCIO_200MG_sales_HA import BAVENCIO_sales_prediction
+from main_innovative_BU_TEPMETKO_TAB_225MG_sales_HA import TEPMETKO_sales_prediction
 import time
 
 print('hello world')
@@ -49,10 +50,19 @@ if os.path.exists(predictions_file):
         print(f"Warning: Could not remove {predictions_file}. Please close Excel and try again.")
 
 #  ["ERBITUX 5MG/ML INJ 20ML 1'S", 'BAVENCIO 200MG (20MG/ML) (1) - HKG', 'TEPMETKO TAB 225 MG - (60) HKG', "REBIF MULTIDOSE SYR 66MCG 4'S+13 NEEDLES", "MAVENCLAD TABS 10MG 1'S"]
-ERBITUX_sales_prediction(SalesM2_2023_to_2025_cleaned_Innovative_BU)
+ERBITUX_prediction_summary_list = ERBITUX_sales_prediction(SalesM2_2023_to_2025_cleaned_Innovative_BU)
 print("================================== DONE =========================================")
 # time.sleep(5)
 # MAVENCLAD_sales_prediction(SalesM2_2023_to_2025_cleaned_Innovative_BU)
 # print("================================== DONE =========================================")
 time.sleep(5)
-BAVENCIO_sales_prediction(SalesM2_2023_to_2025_cleaned_Innovative_BU)
+BAVENCIO_prediction_summary_list = BAVENCIO_sales_prediction(SalesM2_2023_to_2025_cleaned_Innovative_BU)
+print("================================== DONE =========================================")
+time.sleep(5)
+
+TEPMETKO_prediction_summary_list = TEPMETKO_sales_prediction(SalesM2_2023_to_2025_cleaned_Innovative_BU)
+print("================================== DONE =========================================")
+time.sleep(5)
+
+Final_prediction_summary_list = ERBITUX_prediction_summary_list + BAVENCIO_prediction_summary_list + TEPMETKO_prediction_summary_list
+create_excel_from_prediction_summary(Final_prediction_summary_list, output_path='result_excel/predictions_summary.xlsx')

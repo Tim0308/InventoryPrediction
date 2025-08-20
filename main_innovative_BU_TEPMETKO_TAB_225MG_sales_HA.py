@@ -39,79 +39,76 @@ if os.path.exists(aggregated_output):
 # df = pd.read_excel(excel_file_path, sheet_name=sheet_name)
 # # Filter for years >= 2023 and select relevant columns
 # filtered_df = df[df['Year'] >= 2023][columns_to_keep]
-# # Filter for Innovative Medicine BU and ERBITUX brand
-# Innovative_BU_erbitux_sales_2023_to_2025 = filtered_df[
+# # Filter for Innovative Medicine BU and TEPMETKO brand
+# Innovative_BU_TEPMETKO_sales_2023_to_2025 = filtered_df[
 #     (filtered_df['Original BU'] == 'Innovative Medicine') &
-#     (filtered_df['Brand Detail'] == 'ERBITUX 5MG/ML INJ 20ML 1\'S')
+#     (filtered_df['Brand Detail'] == 'TEPMETKO TAB 225 MG - (60) HKG')
 # ]
 
-# print(Innovative_BU_erbitux_sales_2023_to_2025)
+# print(Innovative_BU_TEPMETKO_sales_2023_to_2025)
 
-# output_path_cleaned = 'Innovative_BU_erbitux_sales_2023_to_2025.xlsx'
-# Innovative_BU_erbitux_sales_2023_to_2025.to_excel(output_path_cleaned, index=True)
+# output_path_cleaned = 'Innovative_BU_TEPMETKO_sales_2023_to_2025.xlsx'
+# Innovative_BU_TEPMETKO_sales_2023_to_2025.to_excel(output_path_cleaned, index=True)
 # print(f"Cleaned data saved to: {output_path_cleaned}")
 
 """
 ===============================================================================
 """
-def ERBITUX_sales_prediction(filtered_df):
+def TEPMETKO_sales_prediction(filtered_df):
     # Replace 'Sheet1' with the name or index of the sheet you want to read
-    # Innovative_BU_erbitux_sales_2023_to_2025 = pd.read_excel(output_path_cleaned)
-    Innovative_BU_erbitux_sales_2023_to_2025 = filtered_df[
-        (filtered_df['Brand Detail'] == 'ERBITUX 5MG/ML INJ 20ML 1\'S')
+    # Innovative_BU_TEPMETKO_sales_2023_to_2025 = pd.read_excel(output_path_cleaned)
+    Innovative_BU_TEPMETKO_sales_2023_to_2025 = filtered_df[
+        (filtered_df['Brand Detail'] == 'TEPMETKO TAB 225 MG - (60) HKG')
     ]
 
-    Innovative_BU_erbitux_sales_2023_to_2025 = Innovative_BU_erbitux_sales_2023_to_2025[(Innovative_BU_erbitux_sales_2023_to_2025['AmountInHKD'] > 0)]
+    Innovative_BU_TEPMETKO_sales_2023_to_2025 = Innovative_BU_TEPMETKO_sales_2023_to_2025[(Innovative_BU_TEPMETKO_sales_2023_to_2025['AmountInHKD'] > 0)]
 
 
     # Display the first few rows of the DataFrame
-    # print(Innovative_BU_erbitux_sales_2023_to_2025)
+    # print(Innovative_BU_TEPMETKO_sales_2023_to_2025)
 
 
-    Innovative_BU_erbitux_sales_2023_to_2025_HA = Innovative_BU_erbitux_sales_2023_to_2025[
-        Innovative_BU_erbitux_sales_2023_to_2025['Sub Channel'] == 'HA Hospital'
+    Innovative_BU_TEPMETKO_sales_2023_to_2025_HA = Innovative_BU_TEPMETKO_sales_2023_to_2025[
+        Innovative_BU_TEPMETKO_sales_2023_to_2025['Sub Channel'] == 'HA Hospital'
     ]
 
     # Combine Year and Quarter for the pivot table columns
-    Innovative_BU_erbitux_sales_2023_to_2025_HA['YearQuarter'] = Innovative_BU_erbitux_sales_2023_to_2025_HA['Year'].astype(str) + ' Q' + Innovative_BU_erbitux_sales_2023_to_2025_HA['Quarter'].astype(str).str[-1]
-    # print(Innovative_BU_erbitux_sales_2023_to_2025_HA)
+    Innovative_BU_TEPMETKO_sales_2023_to_2025_HA['YearQuarter'] = Innovative_BU_TEPMETKO_sales_2023_to_2025_HA['Year'].astype(str) + ' Q' + Innovative_BU_TEPMETKO_sales_2023_to_2025_HA['Quarter'].astype(str).str[-1]
+    # print(Innovative_BU_TEPMETKO_sales_2023_to_2025_HA)
 
-    hospital_list = Innovative_BU_erbitux_sales_2023_to_2025_HA['SoldToCustomerName'].unique().tolist()
+    hospital_list = Innovative_BU_TEPMETKO_sales_2023_to_2025_HA['SoldToCustomerName'].unique().tolist()
     print(f"number of hospital = {len(hospital_list)}")
 
 
 
-    HA_hospital_list = ['PRINCESS MARGARET HOSP', 'UNITED CHRISTIAN HOSPITAL', 'TSEUNG KWAN O HOSPITAL', 
-                        'QUEEN ELIZABETH HOSPITAL', 'PRINCE OF WALES HOSPITAL', 'QUEEN MARY HOSPITAL C/O PHARMACY',
-                        'PAMELA YOUDE NETHERSOLE EASTERN HOSPITAL', 'TUEN MUN HOSPITAL', ]
+    HA_hospital_list = Innovative_BU_TEPMETKO_sales_2023_to_2025_HA['SoldToCustomerName'].unique().tolist()
 
     # top_sales_hospital = ['QUEEN ELIZABETH HOSPITAL']
-    Innovative_BU_erbitux_sales_2023_to_2025_HA_filtered_top_sales = Innovative_BU_erbitux_sales_2023_to_2025_HA[
-        (Innovative_BU_erbitux_sales_2023_to_2025_HA['SoldToCustomerName'].isin(HA_hospital_list)) &
-        # (Innovative_BU_erbitux_sales_2023_to_2025_HA['ShipToCode From ImportData'] == '70145698') &
-        (Innovative_BU_erbitux_sales_2023_to_2025_HA['Brand Detail'] == 'ERBITUX 5MG/ML INJ 20ML 1\'S')
+    Innovative_BU_TEPMETKO_sales_2023_to_2025_HA_filtered_top_sales = Innovative_BU_TEPMETKO_sales_2023_to_2025_HA[
+        (Innovative_BU_TEPMETKO_sales_2023_to_2025_HA['SoldToCustomerName'].isin(HA_hospital_list)) &
+        # (Innovative_BU_TEPMETKO_sales_2023_to_2025_HA['ShipToCode From ImportData'] == '70145698') &
+        (Innovative_BU_TEPMETKO_sales_2023_to_2025_HA['Brand Detail'] == 'TEPMETKO TAB 225 MG - (60) HKG')
     ]
 
 
     # Ensure InvoiceDate is datetime
-    Innovative_BU_erbitux_sales_2023_to_2025_HA_filtered_top_sales['InvoiceDate'] = pd.to_datetime(Innovative_BU_erbitux_sales_2023_to_2025_HA_filtered_top_sales['InvoiceDate'])
+    Innovative_BU_TEPMETKO_sales_2023_to_2025_HA_filtered_top_sales['InvoiceDate'] = pd.to_datetime(Innovative_BU_TEPMETKO_sales_2023_to_2025_HA_filtered_top_sales['InvoiceDate'])
     # Sort and reset index for correct diff calculation
-    Innovative_BU_erbitux_sales_2023_to_2025_HA_filtered_top_sales = Innovative_BU_erbitux_sales_2023_to_2025_HA_filtered_top_sales.sort_values(by='InvoiceDate').reset_index(drop=True)
+    Innovative_BU_TEPMETKO_sales_2023_to_2025_HA_filtered_top_sales = Innovative_BU_TEPMETKO_sales_2023_to_2025_HA_filtered_top_sales.sort_values(by='InvoiceDate').reset_index(drop=True)
     # Calculate the time difference between consecutive invoices
-    Innovative_BU_erbitux_sales_2023_to_2025_HA_filtered_top_sales['Time After Last Invoices'] = Innovative_BU_erbitux_sales_2023_to_2025_HA_filtered_top_sales['InvoiceDate'].diff().dt.days
+    Innovative_BU_TEPMETKO_sales_2023_to_2025_HA_filtered_top_sales['Time After Last Invoices'] = Innovative_BU_TEPMETKO_sales_2023_to_2025_HA_filtered_top_sales['InvoiceDate'].diff().dt.days
 
-    # print(Innovative_BU_erbitux_sales_2023_to_2025_HA_filtered_top_sales)
+    # print(Innovative_BU_TEPMETKO_sales_2023_to_2025_HA_filtered_top_sales)
 
     HA_hospital_table_list = []
     # Filter the DataFrame based on 'Brand Detail' being in the list and 'AmountInHKD' being greater than 0
-    HA_hospital_list = ['PRINCESS MARGARET HOSP', 'UNITED CHRISTIAN HOSPITAL', 'TSEUNG KWAN O HOSPITAL', 
-                        'QUEEN ELIZABETH HOSPITAL', 'PRINCE OF WALES HOSPITAL', 'QUEEN MARY HOSPITAL C/O PHARMACY',
-                        'PAMELA YOUDE NETHERSOLE EASTERN HOSPITAL', 'TUEN MUN HOSPITAL']
+    HA_hospital_list = Innovative_BU_TEPMETKO_sales_2023_to_2025_HA['SoldToCustomerName'].unique().tolist()
+
 
     for HA_hospital in HA_hospital_list:
-        df_hospital = Innovative_BU_erbitux_sales_2023_to_2025_HA_filtered_top_sales[
-            (Innovative_BU_erbitux_sales_2023_to_2025_HA_filtered_top_sales['SoldToCustomerName'] == HA_hospital) &
-            (Innovative_BU_erbitux_sales_2023_to_2025_HA_filtered_top_sales['Brand Detail'] == 'ERBITUX 5MG/ML INJ 20ML 1\'S')
+        df_hospital = Innovative_BU_TEPMETKO_sales_2023_to_2025_HA_filtered_top_sales[
+            (Innovative_BU_TEPMETKO_sales_2023_to_2025_HA_filtered_top_sales['SoldToCustomerName'] == HA_hospital) &
+            (Innovative_BU_TEPMETKO_sales_2023_to_2025_HA_filtered_top_sales['Brand Detail'] == 'TEPMETKO TAB 225 MG - (60) HKG')
         ].copy()
         # Sort and reset index for correct diff calculation
         df_hospital = df_hospital.sort_values(by='InvoiceDate').reset_index(drop=True)
@@ -154,5 +151,5 @@ def ERBITUX_sales_prediction(filtered_df):
         prediction_summary_list.append((hospital_name, product_name, results_melted_with_forecast))
 
     # Create a single Excel summary with all hospitals
-    # create_excel_from_prediction_summary(prediction_summary_list, output_path='result_excel/predictions_ERBITUX_summary.xlsx')
+    # create_excel_from_prediction_summary(prediction_summary_list, output_path='result_excel/predictions_TEPMETKO_summary.xlsx')
     return prediction_summary_list

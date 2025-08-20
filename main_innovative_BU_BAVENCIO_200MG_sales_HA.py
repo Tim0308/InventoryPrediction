@@ -142,10 +142,12 @@ def BAVENCIO_sales_prediction(filtered_df):
     for hospital_table in HA_hospital_table_list_merged_same_order:
         print(hospital_table.iloc[1:])
         hospital_name = hospital_table['SoldToCustomerName'].iloc[0]
+        product_name = hospital_table['Brand Detail'].iloc[0]
         results_melted_with_forecast = top_sales_hospital_prediction_stacking(
             hospital_table.iloc[1:], 4
         )  # 4 is the horizon days (number of next invoices to predict)
-        prediction_summary_list.append((hospital_name, results_melted_with_forecast))
+        prediction_summary_list.append((hospital_name, product_name, results_melted_with_forecast))
 
     # Create a single Excel summary with all hospitals
-    create_excel_from_prediction_summary(prediction_summary_list, output_path='result_excel/predictions_BAVENCIO_summary.xlsx')
+    # create_excel_from_prediction_summary(prediction_summary_list, output_path='result_excel/predictions_BAVENCIO_summary.xlsx')
+    return prediction_summary_list

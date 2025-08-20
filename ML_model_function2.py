@@ -47,8 +47,9 @@ def top_sales_hospital_prediction_stacking(sales_table, horizon_days):
 
   # Use TimeSeriesSplit for a robust, leakage-free train/test split
   n_samples = len(X)
-  # Adaptive number of splits to avoid errors on small datasets
-  num_splits = min(5, max(2, n_samples // 4))
+    # Adaptive number of splits to avoid errors on small datasets
+    # Ensure folds never exceed available samples and allow as low as 1 split
+    num_splits = min(5, max(1, n_samples - 1))
   tscv = TimeSeriesSplit(n_splits=num_splits)
   all_splits = list(tscv.split(X, y))
   train_indices, test_indices = all_splits[-1]  # Use the last split for training and testing
