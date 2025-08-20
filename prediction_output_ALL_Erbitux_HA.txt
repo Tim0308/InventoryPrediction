@@ -376,3 +376,39 @@ Next 4 forecasted invoice dates:
   3) +11 days -> 2025-08-12
   4) +11 days -> 2025-08-23
 ============================================================================= 
+Brand Detail: BAVENCIO 200MG (20MG/ML) (1) - HKG
+Hospital: QUEEN ELIZABETH HOSPITAL
+
+--- Stacking Regressor Evaluation ---
+Mean Squared Error: 377.34
+Root Mean Squared Error: 19.43
+R-squared: -0.10
+
+--- Forecast ---
+Last Invoice Date: 2025-07-14
+Predicted time interval (Stacking): 21 days
+Forecasted Next Invoice Date (Stacking): 2025-08-04
+Next 4 forecasted invoice dates:
+  1) +21 days -> 2025-08-04
+  2) +21 days -> 2025-08-25
+  3) +21 days -> 2025-09-15
+  4) +21 days -> 2025-10-06
+============================================================================= 
+Brand Detail: BAVENCIO 200MG (20MG/ML) (1) - HKG
+Hospital: PAMELA YOUDE NETHERSOLE EASTERN HOSPITAL
+
+--- Stacking Regressor Evaluation ---
+Mean Squared Error: 24.48
+Root Mean Squared Error: 4.95
+R-squared: 0.20
+
+--- Forecast ---
+Last Invoice Date: 2025-07-04
+Predicted time interval (Stacking): 30 days
+Forecasted Next Invoice Date (Stacking): 2025-08-03
+Next 4 forecasted invoice dates:
+  1) +30 days -> 2025-08-03
+  2) +31 days -> 2025-09-03
+  3) +27 days -> 2025-09-30
+  4) +30 days -> 2025-10-30
+============================================================================= 
