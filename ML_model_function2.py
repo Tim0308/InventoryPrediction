@@ -333,12 +333,8 @@ def top_sales_hospital_prediction_stacking(sales_table, horizon_days):
             f"Hospital: {hospital_name}",
             "\n--- Forecast ---",
             f"Last Invoice Date: {last_invoice_date.strftime('%Y-%m-%d')}",
-            f"Predicted time interval (Stacking): {forecast_intervals[0]} days",
-            f"Forecasted Next Invoice Date (Stacking): {forecast_dates[0].strftime('%Y-%m-%d')}",
-            "Next forecasted invoice dates:",
+            f"Forecasted Next Invoice Date (Stacking): {forecast_dates[0].strftime('%Y-%m-%d')}"
         ]
-        for idx, (ival, dte) in enumerate(zip(forecast_intervals, forecast_dates), start=1):
-            email_lines.append(f"  {idx}) +{ival} days -> {dte.strftime('%Y-%m-%d')}")
         with open("Email_display.txt", "a", encoding="utf-8") as ef:
             for line in email_lines:
                 ef.write(line + "\n")

@@ -1,0 +1,133 @@
+Brand Detail: ERBITUX 5MG/ML INJ 20ML 1'S
+Hospital: PRINCESS MARGARET HOSP
+
+--- Forecast ---
+Last Invoice Date: 2025-07-10
+Forecasted Next Invoice Date (Stacking): 2025-09-11
+============================================================================= 
+Brand Detail: ERBITUX 5MG/ML INJ 20ML 1'S
+Hospital: UNITED CHRISTIAN HOSPITAL
+
+--- Forecast ---
+Last Invoice Date: 2025-07-10
+Forecasted Next Invoice Date (Stacking): 2025-07-21
+============================================================================= 
+Brand Detail: ERBITUX 5MG/ML INJ 20ML 1'S
+Hospital: TSEUNG KWAN O HOSPITAL
+
+--- Forecast ---
+Last Invoice Date: 2025-07-08
+Forecasted Next Invoice Date (Stacking): 2025-08-07
+============================================================================= 
+Brand Detail: ERBITUX 5MG/ML INJ 20ML 1'S
+Hospital: QUEEN ELIZABETH HOSPITAL
+
+--- Forecast ---
+Last Invoice Date: 2025-07-02
+Forecasted Next Invoice Date (Stacking): 2025-07-25
+============================================================================= 
+Brand Detail: ERBITUX 5MG/ML INJ 20ML 1'S
+Hospital: PRINCE OF WALES HOSPITAL
+
+--- Forecast ---
+Last Invoice Date: 2025-06-27
+Forecasted Next Invoice Date (Stacking): 2025-08-09
+============================================================================= 
+Brand Detail: ERBITUX 5MG/ML INJ 20ML 1'S
+Hospital: QUEEN MARY HOSPITAL C/O PHARMACY
+
+--- Forecast ---
+Last Invoice Date: 2025-06-27
+Forecasted Next Invoice Date (Stacking): 2025-07-22
+============================================================================= 
+Brand Detail: ERBITUX 5MG/ML INJ 20ML 1'S
+Hospital: PAMELA YOUDE NETHERSOLE EASTERN HOSPITAL
+
+--- Forecast ---
+Last Invoice Date: 2025-06-10
+Forecasted Next Invoice Date (Stacking): 2025-07-11
+============================================================================= 
+Brand Detail: ERBITUX 5MG/ML INJ 20ML 1'S
+Hospital: TUEN MUN HOSPITAL
+
+--- Forecast ---
+Last Invoice Date: 2025-05-12
+Forecasted Next Invoice Date (Stacking): 2025-12-02
+============================================================================= 
+Brand Detail: BAVENCIO 200MG (20MG/ML) (1) - HKG
+Hospital: QUEEN ELIZABETH HOSPITAL
+
+--- Forecast ---
+Last Invoice Date: 2025-07-14
+Forecasted Next Invoice Date (Stacking): 2025-08-05
+============================================================================= 
+Brand Detail: BAVENCIO 200MG (20MG/ML) (1) - HKG
+Hospital: PAMELA YOUDE NETHERSOLE EASTERN HOSPITAL
+
+--- Forecast ---
+Last Invoice Date: 2025-07-04
+Forecasted Next Invoice Date (Stacking): 2025-08-03
+============================================================================= 
+Brand Detail: BAVENCIO 200MG (20MG/ML) (1) - HKG
+Hospital: TUEN MUN HOSPITAL
+
+--- Forecast ---
+Last Invoice Date: 2025-07-03
+Forecasted Next Invoice Date (Stacking): 2025-08-06
+============================================================================= 
+Brand Detail: BAVENCIO 200MG (20MG/ML) (1) - HKG
+Hospital: PRINCE OF WALES HOSPITAL
+
+--- Forecast ---
+Last Invoice Date: 2025-07-02
+Forecasted Next Invoice Date (Stacking): 2025-07-30
+============================================================================= 
+Brand Detail: BAVENCIO 200MG (20MG/ML) (1) - HKG
+Hospital: QUEEN MARY HOSPITAL C/O PHARMACY
+
+--- Forecast ---
+Last Invoice Date: 2025-06-26
+Forecasted Next Invoice Date (Stacking): 2025-08-13
+============================================================================= 
+Brand Detail: BAVENCIO 200MG (20MG/ML) (1) - HKG
+Hospital: UNITED CHRISTIAN HOSPITAL
+
+--- Forecast ---
+Last Invoice Date: 2025-06-24
+Forecasted Next Invoice Date (Stacking): 2025-07-11
+============================================================================= 
+Brand Detail: BAVENCIO 200MG (20MG/ML) (1) - HKG
+Hospital: PRINCESS MARGARET HOSP
+
+--- Forecast ---
+Last Invoice Date: 2025-05-08
+Forecasted Next Invoice Date (Stacking): 2025-07-27
+============================================================================= 
+Brand Detail: TEPMETKO TAB 225 MG - (60) HKG
+Hospital: PRINCE OF WALES HOSPITAL
+
+--- Forecast ---
+Last Invoice Date: 2025-05-29
+Forecasted Next Invoice Date (Stacking): 2025-06-24
+============================================================================= 
+Brand Detail: TEPMETKO TAB 225 MG - (60) HKG
+Hospital: QUEEN ELIZABETH HOSPITAL
+
+--- Forecast ---
+Last Invoice Date: 2025-05-28
+Forecasted Next Invoice Date (Stacking): 2025-07-04
+============================================================================= 
+Brand Detail: TEPMETKO TAB 225 MG - (60) HKG
+Hospital: PAMELA YOUDE NETHERSOLE EASTERN HOSPITAL
+
+--- Forecast ---
+Last Invoice Date: 2025-02-03
+Forecasted Next Invoice Date (Stacking): 2025-04-04
+============================================================================= 
+Brand Detail: TEPMETKO TAB 225 MG - (60) HKG
+Hospital: QUEEN MARY HOSPITAL C/O PHARMACY
+
+--- Forecast ---
+Last Invoice Date: 2024-11-18
+Forecasted Next Invoice Date (Stacking): 2025-01-11
+============================================================================= 
