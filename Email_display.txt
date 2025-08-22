@@ -122,12 +122,12 @@ Hospital: PAMELA YOUDE NETHERSOLE EASTERN HOSPITAL
 
 --- Forecast ---
 Last Invoice Date: 2025-02-03
-Forecasted Next Invoice Date (Stacking): 2025-04-04
+Forecasted Next Invoice Date (Stacking): 2025-9-04
 ============================================================================= 
 Brand Detail: TEPMETKO TAB 225 MG - (60) HKG
 Hospital: QUEEN MARY HOSPITAL C/O PHARMACY
 
 --- Forecast ---
 Last Invoice Date: 2024-11-18
-Forecasted Next Invoice Date (Stacking): 2025-01-11
+Forecasted Next Invoice Date (Stacking): 2025-08-30
 ============================================================================= 

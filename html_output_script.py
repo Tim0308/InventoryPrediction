@@ -28,7 +28,7 @@ def is_in_coming_3_weeks(date_str: str) -> bool:
             # Otherwise, coming 3 weeks starts on the next Monday
             coming_period_start = today + timedelta(days=days_until_monday)
         
-        coming_period_end = coming_period_start + timedelta(days=20)  # 3 weeks (21 days - 1)
+        coming_period_end = coming_period_start + timedelta(days=100)  # 3 weeks (21 days - 1)
         
         return coming_period_start <= forecast_date <= coming_period_end
     except ValueError:
@@ -108,11 +108,25 @@ def build_html_from_text(txt: str) -> str:
     # Use filtered hospitals for stats and display
     display_hospitals = filtered_hospitals
     
+    # Group hospitals by product for stacking card layout
+    products_dict = {}
+    for h in display_hospitals:
+        product = h['brand']
+        if product not in products_dict:
+            products_dict[product] = []
+        products_dict[product].append(h)
+    
     # Calculate dynamic stats
-    unique_products = len(set(h['brand'] for h in display_hospitals))
+    unique_products_list = list(products_dict.keys())
     unique_hospital_names = len(set(h['hospital'] for h in display_hospitals))
     
-    # Generate HTML cards for each hospital
+    # Create product names display (limit to reasonable length for display)
+    if len(unique_products_list) <= 3:
+        products_display = "<br>".join(unique_products_list)
+    else:
+        products_display = f"{len(unique_products_list)} Products:<br>" + "<br>".join(unique_products_list[:2]) + f"<br>... and {len(unique_products_list)-2} more"
+    
+    # Generate HTML cards grouped by product
     cards_html = ""
     
     if not display_hospitals:
@@ -124,55 +138,54 @@ def build_html_from_text(txt: str) -> str:
         </div>
         """
     else:
-        for i, hospital in enumerate(display_hospitals):
-            # Determine urgency color based on predicted interval
-            try:
-                days = int(hospital['predicted_interval'].split()[0])
-                if days <= 14:
-                    urgency_class = "urgent"
-                    urgency_text = "High Priority"
-                elif days <= 30:
+        for product_name, hospitals in products_dict.items():
+            # Create product header
+            cards_html += f"""
+            <div class="product-section">
+                <div class="product-header">
+                    <h2>📦 {html.escape(product_name)}</h2>
+                </div>
+                <div class="hospitals-stack">
+            """
+            
+            # Add hospital cards for this product
+            for i, hospital in enumerate(hospitals):
+                # Determine urgency color based on predicted interval
+                try:
+                    days = int(hospital['predicted_interval'].split()[0])
+                    if days <= 14:
+                        urgency_class = "urgent"
+                        urgency_text = "High Priority"
+                    elif days <= 30:
+                        urgency_class = "medium"
+                        urgency_text = "Medium Priority"
+                    else:
+                        urgency_class = "low"
+                        urgency_text = "Low Priority"
+                except:
                     urgency_class = "medium"
                     urgency_text = "Medium Priority"
-                else:
-                    urgency_class = "low"
-                    urgency_text = "Low Priority"
-            except:
-                urgency_class = "medium"
-                urgency_text = "Medium Priority"
-            
-            forecast_list = ""
-            for forecast in hospital['forecast_dates']:
-                forecast_list += f"<li>{html.escape(forecast)}</li>"
-            
-            cards_html += f"""
-        <div class="hospital-card {urgency_class}">
-            <div class="card-header">
-                <h3>{html.escape(hospital['hospital'])}</h3>
-            </div>
-            <div class="card-content">
-                <div class="info-grid">
-                    <div class="info-item">
-                        <span class="label">Product:</span>
-                        <span class="value">{html.escape(hospital['brand'])}</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="label">Last Invoice:</span>
-                        <span class="value">{html.escape(hospital['last_invoice'])}</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="label">Predicted Interval:</span>
-                        <span class="value interval">{html.escape(hospital['predicted_interval'])}</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="label">Next Invoice Date:</span>
-                        <span class="value next-date">{html.escape(hospital['next_date'])}</span>
+                
+                cards_html += f"""
+                <div class="hospital-card {urgency_class}">
+                    <div class="card-content">
+                        <div class="hospital-name">{html.escape(hospital['hospital'])}</div>
+                        <div class="info-row">
+                            <span class="info-label">Last Invoice:</span>
+                            <span class="info-value">{html.escape(hospital['last_invoice'])}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Next Invoice:</span>
+                            <span class="info-value next-date">{html.escape(hospital['next_date'])}</span>
+                        </div>
                     </div>
                 </div>
-                
+                """
+            
+            cards_html += """
+                </div>
             </div>
-        </div>
-        """
+            """
     
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     total_hospitals = len(display_hospitals)
@@ -180,11 +193,7 @@ def build_html_from_text(txt: str) -> str:
     # Dynamic stats section based on what data we have
     stats_html = f"""
                 <div class="stat-item">
-                    <div class="stat-number">{total_hospitals}</div>
-                    <div class="stat-label">Total Entries</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">{unique_products}</div>
+                    <div class="stat-number" style="font-size: 0.9em; line-height: 1.2;">{products_display}</div>
                     <div class="stat-label">Products</div>
                 </div>
                 <div class="stat-item">
@@ -203,44 +212,45 @@ def build_html_from_text(txt: str) -> str:
     
     body {{ 
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
+        background: white;
         padding: 20px;
         color: #333;
+        line-height: 1.4;
     }}
     
     .container {{
-        max-width: 1200px;
+        max-width: 800px;
         margin: 0 auto;
         background: white;
-        border-radius: 15px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        overflow: hidden;
+        border: 1px solid #e1e5e9;
+        border-radius: 8px;
     }}
     
     .header {{
-        color: black;
-        padding: 30px;
+        background: white;
+        border-bottom: 2px solid #e1e5e9;
+        padding: 25px;
         text-align: center;
     }}
     
     .header h1 {{
-        font-size: 2.5em;
-        margin-bottom: 10px;
-        font-weight: 300;
+        font-size: 1.8em;
+        margin-bottom: 8px;
+        color: #2c3e50;
+        font-weight: 600;
     }}
     
     .header .subtitle {{
-        font-size: 1.1em;
-        opacity: 0.8;
-        margin-bottom: 20px;
+        font-size: 1em;
+        color: #6c757d;
+        margin-bottom: 15px;
     }}
     
     .stats {{
         display: flex;
         justify-content: center;
-        gap: 30px;
-        margin-top: 15px;
+        gap: 40px;
+        margin-top: 10px;
     }}
     
     .stat-item {{
@@ -248,196 +258,179 @@ def build_html_from_text(txt: str) -> str:
     }}
     
     .stat-number {{
-        font-size: 2em;
+        font-size: 1.2em;
         font-weight: bold;
-        color: #3498db;
+        color: #2c3e50;
+        line-height: 1.2;
     }}
     
     .stat-label {{
-        font-size: 0.9em;
-        opacity: 0.8;
+        font-size: 0.85em;
+        color: #6c757d;
+        margin-top: 5px;
     }}
     
     .content {{
-        padding: 40px;
+        padding: 20px;
     }}
     
-    .hospital-card {{
-        background: white;
-        border-radius: 12px;
-        margin-bottom: 25px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-        border-left: 5px solid #ddd;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    .product-section {{
+        margin-bottom: 30px;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        overflow: hidden;
     }}
     
-    .hospital-card:hover {{
-        transform: translateY(-2px);
-        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    }}
-    
-    .hospital-card.urgent {{
-        border-left-color: #e74c3c;
-    }}
-    
-    .hospital-card.medium {{
-        border-left-color: #f39c12;
-    }}
-    
-    .hospital-card.low {{
-        border-left-color: #27ae60;
-    }}
-    
-    .card-header {{
+    .product-header {{
+        background: #e9ecef;
+        padding: 15px 20px;
+        border-bottom: 1px solid #dee2e6;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 20px 25px;
-        border-bottom: 1px solid #eee;
     }}
     
-    .card-header h3 {{
-        font-size: 1.4em;
+    .product-header h2 {{
+        font-size: 1.3em;
         color: #2c3e50;
         font-weight: 600;
+        margin: 0;
     }}
     
-    .priority-badge {{
-        padding: 6px 12px;
-        border-radius: 20px;
+    .hospital-count {{
+        background: #6c757d;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 12px;
         font-size: 0.8em;
         font-weight: 600;
-        text-transform: uppercase;
     }}
     
-    .priority-badge.urgent {{
-        background: #ffe6e6;
-        color: #e74c3c;
+    .hospitals-stack {{
+        background: white;
     }}
     
-    .priority-badge.medium {{
-        background: #fff3e0;
-        color: #f39c12;
+    .hospital-card {{
+        border-bottom: 1px solid #f1f3f4;
+        transition: background-color 0.2s ease;
     }}
     
-    .priority-badge.low {{
-        background: #e8f5e8;
-        color: #27ae60;
+    .hospital-card:last-child {{
+        border-bottom: none;
+    }}
+    
+    .hospital-card:hover {{
+        background: #f8f9fa;
+    }}
+    
+    .hospital-card.urgent {{
+        border-left: 4px solid #dc3545;
+    }}
+    
+    .hospital-card.medium {{
+        border-left: 4px solid #fd7e14;
+    }}
+    
+    .hospital-card.low {{
+        border-left: 4px solid #28a745;
     }}
     
     .card-content {{
-        padding: 25px;
+        padding: 15px 20px;
     }}
     
-    .info-grid {{
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 15px;
-        margin-bottom: 25px;
+    .hospital-name {{
+        font-size: 1.1em;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 8px;
     }}
     
-    .info-item {{
+    .info-row {{
         display: flex;
-        flex-direction: column;
-        gap: 5px;
+        justify-content: space-between;
+        margin-bottom: 5px;
+        align-items: center;
     }}
     
-    .label {{
+    .info-row:last-child {{
+        margin-bottom: 0;
+    }}
+    
+    .info-label {{
         font-size: 0.9em;
-        color: #7f8c8d;
+        color: #6c757d;
         font-weight: 500;
     }}
     
-    .value {{
-        font-size: 1.1em;
+    .info-value {{
+        font-size: 0.95em;
         color: #2c3e50;
         font-weight: 600;
     }}
     
-    .interval {{
-        color: #e74c3c;
-        font-size: 1.2em;
-    }}
-    
     .next-date {{
-        color: #3498db;
-    }}
-    
-    .forecast-section {{
-        border-top: 1px solid #eee;
-        padding-top: 20px;
-    }}
-    
-    .forecast-section h4 {{
-        color: #34495e;
-        margin-bottom: 15px;
-        font-size: 1.1em;
-    }}
-    
-    .forecast-list {{
-        list-style: none;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 10px;
-    }}
-    
-    .forecast-list li {{
-        background: #f8f9fa;
-        padding: 10px 15px;
-        border-radius: 6px;
-        font-family: 'Consolas', 'Courier New', monospace;
-        font-size: 0.9em;
-        border-left: 3px solid #3498db;
+        color: #007bff !important;
+        background: #e3f2fd;
+        padding: 2px 8px;
+        border-radius: 4px;
     }}
     
     .no-results {{
         text-align: center;
-        padding: 60px 20px;
-        color: #7f8c8d;
+        padding: 40px 20px;
+        color: #6c757d;
     }}
     
     .no-results-icon {{
-        font-size: 4em;
-        margin-bottom: 20px;
+        font-size: 3em;
+        margin-bottom: 15px;
     }}
     
     .no-results h3 {{
-        font-size: 1.8em;
-        margin-bottom: 15px;
-        color: #34495e;
+        font-size: 1.5em;
+        margin-bottom: 10px;
+        color: #495057;
     }}
     
     .no-results p {{
-        font-size: 1.1em;
-        line-height: 1.6;
-        max-width: 500px;
+        font-size: 1em;
+        line-height: 1.5;
+        max-width: 400px;
         margin: 0 auto;
     }}
     
     .footer {{
         background: #f8f9fa;
-        padding: 20px;
+        padding: 15px;
         text-align: center;
-        color: #7f8c8d;
-        font-size: 0.9em;
-        border-top: 1px solid #eee;
+        color: #6c757d;
+        font-size: 0.85em;
+        border-top: 1px solid #e1e5e9;
     }}
     
-    @media (max-width: 768px) {{
-        .container {{ margin: 10px; }}
-        .header {{ padding: 20px; }}
-        .content {{ padding: 20px; }}
-        .header h1 {{ font-size: 2em; }}
-        .stats {{ flex-direction: column; gap: 15px; }}
-        .info-grid {{ grid-template-columns: 1fr; }}
-        .forecast-list {{ grid-template-columns: 1fr; }}
+    /* Outlook-specific fixes */
+    table {{ border-collapse: collapse; }}
+    .outlook-table {{ width: 100%; }}
+    
+    @media (max-width: 600px) {{
+        .container {{ margin: 10px; border-radius: 4px; }}
+        .header {{ padding: 15px; }}
+        .content {{ padding: 15px; }}
+        .header h1 {{ font-size: 1.5em; }}
+        .stats {{ flex-direction: column; gap: 20px; }}
+        .product-header {{ flex-direction: column; gap: 10px; text-align: center; }}
+        .info-row {{ flex-direction: column; align-items: flex-start; gap: 3px; }}
     }}
 </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🏥 Weekly Inventory Forecasts Result</h1>
+            <h1>🏥 Weekly Inventory Forecasts</h1>
+            <div class="stats">
+                {stats_html}
+            </div>
         </div>
         
         <div class="content">
