@@ -13,8 +13,8 @@ def is_valid_future_date(date_str: str) -> bool:
     except ValueError:
         return False
 
-def is_in_coming_week(date_str: str) -> bool:
-    """Check if the date is in the coming week (assuming script runs on Monday)"""
+def is_in_coming_3_weeks(date_str: str) -> bool:
+    """Check if the date is in the coming 3 weeks (assuming script runs on Monday)"""
     try:
         forecast_date = datetime.strptime(date_str, '%Y-%m-%d').date()
         today = datetime.now().date()
@@ -22,15 +22,15 @@ def is_in_coming_week(date_str: str) -> bool:
         # Calculate the start of the coming week (next Monday if today is not Monday)
         days_until_monday = (7 - today.weekday()) % 7
         if days_until_monday == 0 and today.weekday() == 0:
-            # If today is Monday, coming week starts today
-            coming_week_start = today
+            # If today is Monday, coming 3 weeks starts today
+            coming_period_start = today
         else:
-            # Otherwise, coming week starts on the next Monday
-            coming_week_start = today + timedelta(days=days_until_monday)
+            # Otherwise, coming 3 weeks starts on the next Monday
+            coming_period_start = today + timedelta(days=days_until_monday)
         
-        coming_week_end = coming_week_start + timedelta(days=6)  # Sunday
+        coming_period_end = coming_period_start + timedelta(days=20)  # 3 weeks (21 days - 1)
         
-        return coming_week_start <= forecast_date <= coming_week_end
+        return coming_period_start <= forecast_date <= coming_period_end
     except ValueError:
         return False
 
@@ -90,17 +90,17 @@ def build_html_from_text(txt: str) -> str:
             unique_hospitals.append(h)
             seen.add(key)
     
-    # Apply date filtering: remove invalid/past dates and non-coming-week dates
+    # Apply date filtering: remove invalid/past dates and non-coming-3-weeks dates
     filtered_hospitals = []
     for h in unique_hospitals:
         next_date = h['next_date']
         if next_date:
             # Check if date is valid and in the future
             if is_valid_future_date(next_date):
-                # Check if date is in the coming week
-                if is_in_coming_week(next_date):
+                # Check if date is in the coming 3 weeks
+                if is_in_coming_3_weeks(next_date):
                     filtered_hospitals.append(h)
-            # Skip entries with past dates or not in coming week
+            # Skip entries with past dates or not in coming 3 weeks
         else:
             # Skip entries without next date
             continue
@@ -119,8 +119,8 @@ def build_html_from_text(txt: str) -> str:
         cards_html = """
         <div class="no-results">
             <div class="no-results-icon">📅</div>
-            <h3>No forecasts for the coming week</h3>
-            <p>All predicted invoice dates are either in the past or not scheduled for the coming week.</p>
+            <h3>No forecasts for the coming 3 weeks</h3>
+            <p>All predicted invoice dates are either in the past or not scheduled for the coming 3 weeks.</p>
         </div>
         """
     else:
@@ -219,8 +219,7 @@ def build_html_from_text(txt: str) -> str:
     }}
     
     .header {{
-        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-        color: white;
+        color: black;
         padding: 30px;
         text-align: center;
     }}
@@ -438,11 +437,7 @@ def build_html_from_text(txt: str) -> str:
 <body>
     <div class="container">
         <div class="header">
-            <h1>🏥 Inventory Forecasts Dashboard</h1>
-            <p class="subtitle">AI-Powered Hospital Inventory Predictions</p>
-            <div class="stats">
-                {stats_html}
-            </div>
+            <h1>🏥 Weekly Inventory Forecasts Result</h1>
         </div>
         
         <div class="content">
