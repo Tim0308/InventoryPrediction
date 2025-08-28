@@ -28,7 +28,7 @@ def is_in_coming_3_weeks(date_str: str) -> bool:
             # Otherwise, coming 3 weeks starts on the next Monday
             coming_period_start = today + timedelta(days=days_until_monday)
         
-        coming_period_end = coming_period_start + timedelta(days=100)  # 3 weeks (21 days - 1)
+        coming_period_end = coming_period_start + timedelta(6)  # 3 weeks (21 days - 1)
         
         return coming_period_start <= forecast_date <= coming_period_end
     except ValueError:
@@ -133,8 +133,8 @@ def build_html_from_text(txt: str) -> str:
         cards_html = """
         <div class="no-results">
             <div class="no-results-icon">📅</div>
-            <h3>No forecasts for the coming 3 weeks</h3>
-            <p>All predicted invoice dates are either in the past or not scheduled for the coming 3 weeks.</p>
+            <h3>No forecasts for the coming week</h3>
+            <p>All predicted invoice dates are either in the past or not scheduled for the coming week.</p>
         </div>
         """
     else:
