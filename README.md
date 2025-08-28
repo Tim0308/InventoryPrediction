@@ -47,7 +47,7 @@
 
 ### Outputs
 - Aggregated text output: controlled by `AGGREGATED_OUTPUT_FILE` in `ML_model_function2.py`.
-  - Default: `prediction_output_ALL_Erbitux_HA.txt`.
+  - Default: `prediction_output_ALL.txt`.
   - Content includes metrics, last actual invoice date, the next predicted interval/date, and a list of the **next 4 forecasted invoice dates** like:
     - `1) +N days -> YYYY-MM-DD`
     - `2) +M days -> YYYY-MM-DD`
@@ -62,7 +62,7 @@
   ```bash
   python -u main_innovative_BU_erbitux_sales_HA.py
   ```
-- Output: check `prediction_output_ALL_Erbitux_HA.txt` for the aggregated results.
+- Output: check `prediction_output_ALL.txt` for the aggregated results.
 
 ### Customization
 - **Forecast horizon**: In `ML_model_function2.py`, change `horizon = 4` to any positive integer.
