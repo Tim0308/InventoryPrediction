@@ -17,4 +17,7 @@
 /result_excel/predictions_ERBITUX_summary.xlsx
 /result_excel/predictions_BAVENCIO_summary.xlsx
 /prediction_output_ALL_Erbitux_HA.txt
+/run_main.sh
+/Email_display.txt
+/Prediction_model.ipynb
     
