@@ -11,8 +11,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 import numpy as np
 import openpyxl
-from ML_model_function import top_sales_hospital_prediction
-from ML_model_function2 import top_sales_hospital_prediction_stacking
+from Machine_Learning_Function.ML_model_function2 import top_sales_hospital_prediction_stacking
 from report_export import create_excel_from_prediction_summary
 import os
 
